@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebRTC Group Video Call</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Room Selection -->
+    <div id="room-selection" class="container">
+        <div class="form-container">
+            <h1>Join Video Call</h1>
+            <div class="input-group">
+                <input type="text" id="username" placeholder="Enter your name" required>
+            </div>
+            <div class="input-group">
+                <input type="text" id="room-id" placeholder="Enter room ID (optional)">
+            </div>
+            <div class="button-group">
+                <button id="join-room-btn">Join Room</button>
+                <button id="create-room-btn">Create New Room</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Call Interface -->
+    <div id="video-call" class="hidden">
+        <!-- Header -->
+        <div class="header">
+            <div class="room-info">
+                <span id="current-room-id"></span>
+                <button id="copy-room-id" title="Copy room ID">📋</button>
+            </div>
+            <div class="participant-count">
+                <span id="participant-count">1 participant</span>
+            </div>
+            <button id="leave-call" class="leave-btn">Leave Call</button>
+        </div>
+
+        <!-- Video Grid -->
+        <div id="video-grid" class="video-grid">
+            <!-- Local video will be added here -->
+        </div>
+
+        <!-- Screen Share Display -->
+        <div id="screen-share-container" class="hidden">
+            <div class="screen-share-header">
+                <span id="screen-share-username"></span> is sharing screen
+                <button id="close-screen-share">✕</button>
+            </div>
+            <video id="screen-share-video" autoplay playsinline></video>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button id="toggle-video" class="control-btn video-on" title="Toggle Video">
+                🎥
+            </button>
+            <button id="toggle-audio" class="control-btn audio-on" title="Toggle Audio">
+                🎤
+            </button>
+            <button id="screen-share" class="control-btn" title="Share Screen">
+                🖥️
+            </button>
+            <button id="chat-toggle" class="control-btn" title="Toggle Chat">
+                💬
+            </button>
+        </div>
+
+        <!-- Chat Panel -->
+        <div id="chat-panel" class="chat-panel hidden">
+            <div class="chat-header">
+                <h3>Chat</h3>
+                <button id="close-chat">✕</button>
+            </div>
+            <div id="chat-messages" class="chat-messages"></div>
+            <div class="chat-input-container">
+                <input type="text" id="chat-input" placeholder="Type a message...">
+                <button id="send-message">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
