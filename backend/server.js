@@ -8,13 +8,33 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
     cors: {
-        origin: "*",
-        methods: ["GET", "POST"]
+        origin: ["http://localhost:3000", "http://localhost:3001"],
+        methods: ["GET", "POST"],
+        credentials: true
     }
 });
 
-// Serve static files
-app.use(express.static(path.join(__dirname, 'public')));
+// Enable CORS for all routes
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    next();
+});
+
+// Serve React build files in production
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../client/build')));
+    
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
+    });
+} else {
+    // Development route
+    app.get('/', (req, res) => {
+        res.json({ message: 'WebRTC Server is running. React client should be running on port 3000.' });
+    });
+}
 
 // Store room information
 const rooms = new Map();
@@ -139,6 +159,28 @@ io.on('connection', (socket) => {
         }
     });
 
+    // Whiteboard collaboration handlers
+    socket.on('whiteboard-draw', (data) => {
+        if (socket.roomId) {
+            // Broadcast drawing data to all other users in the room
+            socket.to(socket.roomId).emit('whiteboard-draw', data);
+        }
+    });
+
+    socket.on('join-whiteboard', (roomId) => {
+        if (socket.roomId && rooms.has(socket.roomId)) {
+            console.log(`User ${socket.userId} joined whiteboard in room ${socket.roomId}`);
+        }
+    });
+
+    socket.on('whiteboard-clear', (roomId) => {
+        if (socket.roomId) {
+            // Broadcast clear event to all users in the room
+            socket.to(socket.roomId).emit('whiteboard-clear');
+            console.log(`User ${socket.userId} cleared whiteboard in room ${socket.roomId}`);
+        }
+    });
+
     // Handle disconnect
     socket.on('disconnect', () => {
         console.log('User disconnected:', socket.id);
@@ -166,7 +208,8 @@ io.on('connection', (socket) => {
     });
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`WebRTC Server running on port ${PORT}`);
+    console.log(`In development, React client should run on port 3000`);
 });

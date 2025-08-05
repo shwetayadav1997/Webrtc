@@ -1,13 +1,13 @@
 {
-  "name": "webrtc-group-calling",
+  "name": "webrtc-backend",
   "version": "1.0.0",
-  "description": "WebRTC group calling application with video, audio, and screen sharing",
+  "description": "WebRTC group calling backend server with Socket.IO signaling",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
-  "keywords": ["webrtc", "video-calling", "screen-sharing", "group-call"],
+  "keywords": ["webrtc", "video-calling", "screen-sharing", "group-call", "backend", "socketio"],
   "author": "",
   "license": "MIT",
   "dependencies": {
